@@ -854,6 +854,20 @@ final public class AndrolibResources {
         }
     }
 
+    public void listFrameworkDirectory() throws AndrolibException {
+        File dir = getFrameworkDir();
+        if (dir == null) {
+            LOGGER.severe("No framework directory found. Nothing to list.");
+            return;
+        }
+
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file.isFile() && file.getName().endsWith(".apk")) {
+                LOGGER.info(file.getName());
+            }
+        }
+    }
+
     public void installFramework(File frameFile) throws AndrolibException {
         installFramework(frameFile, apkOptions.frameworkTag);
     }
@@ -984,7 +998,9 @@ final public class AndrolibResources {
                 if (apkOptions.frameworkFolderLocation != null) {
                     LOGGER.severe("Can't create Framework directory: " + dir);
                 }
-                throw new AndrolibException("Can't create directory: " + dir);
+                throw new AndrolibException(String.format(
+                        "Can't create directory: (%s). Pass a writable path with --frame-path {DIR}. ", dir
+                ));
             }
         }
 
